@@ -1,14 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import { SignIn, CreateAccount, Profile, Home, Search, Details, Search2 } from './Components/Screens';
+import { SignIn, CreateAccount, Profile, Home, Search, Details, Search2, Splash } from './Components/Screens';
 
 const Tabs = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 const SearchStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator();
 
 const HomeStackScreen = () => (
   <HomeStack.Navigator>
@@ -24,12 +26,40 @@ const SearchStackScreen = () => (
   </SearchStack.Navigator>
 );
 
-export default () => (
-  <NavigationContainer>
-    <Tabs.Navigator>
-      <Tabs.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false }} />
-      <Tabs.Screen name="Search" component={SearchStackScreen} options={{ headerShown: false }} />
-    </Tabs.Navigator>
+const ProfileStackScreen = () => (
+  <ProfileStack.Navigator>
+    <ProfileStack.Screen name="Profile" component={Profile} />
+  </ProfileStack.Navigator>
+);
+
+const TabsScreen = () => (
+  <Tabs.Navigator>
+    <Tabs.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false }} />
+    <Tabs.Screen name="Search" component={SearchStackScreen} options={{ headerShown: false }} />
+  </Tabs.Navigator>
+);
+
+const Drawer = createDrawerNavigator();
+
+export default () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000)
+  }, []);
+
+  if (isLoading) {
+    return <Splash />
+  };
+
+  return (
+    <NavigationContainer>
+    <Drawer.Navigator>
+      <Drawer.Screen name="Home" component={TabsScreen} options={{ headerShown: false }} />
+      <Drawer.Screen name="Profile" component={ProfileStackScreen} options={{ headerShown: false }} />
+    </Drawer.Navigator>
     {/* <AuthStack.Navigator>
       <AuthStack.Screen 
         name="SignIn" 
@@ -42,5 +72,6 @@ export default () => (
         options={{ title: "Create Account" }} 
       />
     </AuthStack.Navigator> */}
-  </NavigationContainer>
-)
+    </NavigationContainer>
+  );
+}
